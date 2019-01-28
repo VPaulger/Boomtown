@@ -7,7 +7,7 @@
  *  Throwing ApolloErrors from your resolvers is a nice pattern to follow and
  *  will help you easily debug problems in your resolving functions.
  *
- *  It will also help you control th error output of your resource methods and use error
+ *  It will also help you control the error output of your resource methods and use error
  *  messages on the client! (More on that later).
  *
  *  The user resolver has been completed as an example of what you'll need to do.
@@ -27,6 +27,7 @@ module.exports = (app) => {
     // Date: DateScalar,
 
     Query: {
+      // LATER - PART 2
       viewer() {
         /**
          * @TODO: Authentication - Server
@@ -44,6 +45,7 @@ module.exports = (app) => {
          */
         return null;
       },
+      // NOW - PART 1
       async user(parent, { id }, { pgResource }, info) {
         try {
           const user = await pgResource.getUserById(id);
@@ -52,85 +54,75 @@ module.exports = (app) => {
           throw new ApolloError(e);
         }
       },
-      async items() {
-        // @TODO: Replace this mock return statement with the correct items from Postgres
-        return [];
-        // -------------------------------
+      // NOW - PART 1
+      async items(parent, { idToOmit }, { pgResource }, info)  {
+        try {
+          const items = await pgResource.getItems(idToOmit);
+          return items;
+        } catch (e) {
+          throw new ApolloError(e);
+        }
       },
-      async tags() {
-        // @TODO: Replace this mock return statement with the correct tags from Postgres
-        return [];
-        // -------------------------------
+      // NOW - PART 1
+      async tags(parent, {} , { pgResource }, info) {
+        try {
+          const tags = await pgResource.getTags();
+          return tags;
+        } catch (e) {
+          throw new ApolloError(e);
+        }
       }
     },
 
     User: {
-      /**
-       *  @TODO: Advanced resolvers
-       *
-       *  The User GraphQL type has two fields that are not present in the
-       *  user table in Postgres: items and borrowed.
-       *
-       *  According to our GraphQL schema, these fields should return a list of
-       *  Items (GraphQL type) the user has lent (items) and borrowed (borrowed).
-       *
-       */
-      // @TODO: Uncomment these lines after you define the User type with these fields
-      // items() {
-      //   // @TODO: Replace this mock return statement with the correct items from Postgres
-      //   return []
-      //   // -------------------------------
-      // },
-      // borrowed() {
-      //   // @TODO: Replace this mock return statement with the correct items from Postgres
-      //   return []
-      //   // -------------------------------
-      // }
-      // -------------------------------
+      // NOW - PART 1
+      async items(parent, {}, { pgResource }, info) {
+        try {
+          const items = await pgResource.getItems(parent.id);
+          return items;
+        } catch (e) {
+          throw new ApolloError(e);
+        }
+      },
+      // NOW - PART 1
+      async borrowed(parent, {}, { pgResource }, info) {
+        try {
+          const borrowed = await pgResource.getBorrowedItemsForUser(parent.id);
+          return borrowed;
+        } catch (e) {
+          throw new ApolloError(e);
+        }
+      }
     },
 
     Item: {
-      /**
-       *  @TODO: Advanced resolvers
-       *
-       *  The Item GraphQL type has two fields that are not present in the
-       *  Items table in Postgres: itemowner, tags and borrower.
-       *
-       * According to our GraphQL schema, the itemowner and borrower should return
-       * a User (GraphQL type) and tags should return a list of Tags (GraphQL type)
-       *
-       */
-      // @TODO: Uncomment these lines after you define the Item type with these fields
-      // async itemowner() {
-      //   // @TODO: Replace this mock return statement with the correct user from Postgres
-      //   return {
-      //     id: 29,
-      //     fullname: "Mock user",
-      //     email: "mock@user.com",
-      //     bio: "Mock user. Remove me."
-      //   }
-      //   // -------------------------------
-      // },
-      // async tags() {
-      //   // @TODO: Replace this mock return statement with the correct tags for the queried Item from Postgres
-      //   return []
-      //   // -------------------------------
-      // },
-      // async borrower() {
-      //   /**
-      //    * @TODO: Replace this mock return statement with the correct user from Postgres
-      //    * or null in the case where the item has not been borrowed.
-      //    */
-      //   return null
-      //   // -------------------------------
-      // },
-      // async imageurl({ imageurl, imageid, mimetype, data }) {
-      //   if (imageurl) return imageurl
-      //   if (imageid) {
-      //     return `data:${mimetype};base64, ${data}`
-      //   }
-      // }
-      // -------------------------------
+      // NOW - PART 1
+      async owner(parent, {}, { pgResource }, info) {
+        try {
+          const owner = await pgResource.getUserById(parent.ownerid);
+          return owner;
+        } catch (e) {
+          throw new ApolloError(e);
+        }
+      },
+      // NOW - PART 1
+      async tags(parent, {}, { pgResource }, info) {
+        try {
+          const tags = await pgResource.getTagsForItem(parent.id);
+          return tags;
+        } catch (e) {
+          throw new ApolloError(e);
+        }
+      },
+      // NOW - PART 1
+      async borrower(parent, {}, { pgResource }, info) {
+        try {
+          const tags = await pgResource.getUserById(parent.borrowerid);
+          return tags;
+        } catch (e) {
+          throw new ApolloError(e);
+        }
+      }
     },
 
     Mutation: {
@@ -152,14 +144,13 @@ module.exports = (app) => {
          *  destructuring should look like.
          */
 
-        image = await image;
-        const user = await jwt.decode(context.token, app.get('JWT_SECRET'));
-        const newItem = await context.pgResource.saveNewItem({
-          item: args.item,
-          image: args.image,
-          user
-        });
-        return newItem;
+        try {
+          // const user = await jwt.decode(context.token, app.get('JWT_SECRET'));
+          const newItem = await context.pgResource.saveNewItem(args.input);
+          return newItem;
+        } catch (e) {
+          throw new ApolloError(e);
+        }
       }
     }
   };
