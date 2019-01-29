@@ -180,6 +180,7 @@ module.exports = postgres => {
           values: [title, description, ownerID, borrowerID]
         })
 
+        console.log(itemResult);
         const item_id = itemResult.row[0].id        
         const tagPromise = tagIDs.map(async (tag_id) => {
           await client.query({
@@ -187,8 +188,6 @@ module.exports = postgres => {
             values: [item_id, tag_id]
           })
         })
-
-        console.log(tagPromise);
 
         await Promise.all(
           tagPromise
