@@ -1,12 +1,12 @@
-const strs = require('stringstream');
+const strs = require('stringstream')
 
-function tagsQueryString(tags, itemid, result) {
+function tagsQueryString (tags, itemid, result) {
   /**
    * Challenge:
    * This function is recursive, and a little complicated.
    * Can you refactor it to be simpler / more readable?
    */
-  const length = tags.length;
+  const length = tags.length
   return length === 0
     ? `${result};`
     : tags.shift() &&
@@ -14,47 +14,47 @@ function tagsQueryString(tags, itemid, result) {
           tags,
           itemid,
           `${result}($${tags.length + 1}, ${itemid})${length === 1 ? '' : ','}`
-        );
+        )
 }
 
 module.exports = postgres => {
   // FOR LATER - PART 2
   return {
-    async createUser({ fullname, email, password }) {
+    async createUser ({ fullname, email, password }) {
       const newUserInsert = {
         text: '', // @TODO: Authentication - Server
         values: [fullname, email, password]
-      };
+      }
       try {
-        const user = await postgres.query(newUserInsert);
-        return user.rows[0];
+        const user = await postgres.query(newUserInsert)
+        return user.rows[0]
       } catch (e) {
         switch (true) {
           case /users_fullname_key/.test(e.message):
-            throw 'An account with this username already exists.';
+            throw 'An account with this username already exists.'
           case /users_email_key/.test(e.message):
-            throw 'An account with this email already exists.';
+            throw 'An account with this email already exists.'
           default:
-            throw 'There was a problem creating your account.';
+            throw 'There was a problem creating your account.'
         }
       }
     },
     // FOR LATER - PART 2
-    async getUserAndPasswordForVerification(email) {
+    async getUserAndPasswordForVerification (email) {
       const findUserQuery = {
         text: '', // @TODO: Authentication - Server
         values: [email]
-      };
+      }
       try {
-        const user = await postgres.query(findUserQuery);
-        if (!user) throw 'User was not found.';
-        return user.rows[0];
+        const user = await postgres.query(findUserQuery)
+        if (!user) throw 'User was not found.'
+        return user.rows[0]
       } catch (e) {
-        throw 'User was not found.';
+        throw 'User was not found.'
       }
     },
     // NOW - PART 1
-    async getUserById(id) {
+    async getUserById (id) {
       /**
        *  @TODO: Handling Server Errors
        *
@@ -78,7 +78,7 @@ module.exports = postgres => {
       const findUserQuery = {
         text: 'SELECT * FROM users WHERE id = $1', // @TODO: Basic queries
         values: [id]
-      };
+      }
 
       /**
        *  Refactor the following code using the error handling logic described above.
@@ -89,63 +89,57 @@ module.exports = postgres => {
        *  Customize your throw statements so the message can be used by the client.
        */
       try {
-        const user = await postgres.query(findUserQuery);
+        const user = await postgres.query(findUserQuery)
         // return user;
-        return user.rows[0];
+        return user.rows[0]
       } catch (e) {
-        throw 'User was not found.';
+        throw 'User was not found.'
       }
-        // -------------------------------
+      // -------------------------------
     },
     // NOW - PART 1
-    async getItems(idToOmit) {
+    async getItems (idToOmit) {
       const items = await postgres.query({
         text: `SELECT * FROM items WHERE id != $1`,
         values: idToOmit ? [idToOmit] : []
-      });
-      return items.rows;
+      })
+      return items.rows
     },
     // NOW - PART 1
-    async getItemsForUser(id) {
+    async getItemsForUser (id) {
       const items = await postgres.query({
         text: `SELECT * FROM items WHERE ownerid = $1`,
         values: [id]
-      });
-      return items.rows;
+      })
+      return items.rows
     },
     // NOW - PART 1
-    async getBorrowedItemsForUser(id) {
+    async getBorrowedItemsForUser (id) {
       const items = await postgres.query({
         text: `SELECT * FROM items WHERE borrowerid = $1`,
         values: [id]
-      });
-      return items.rows;
+      })
+      return items.rows
     },
     // NOW - PART 1
-    async getTags() {
+    async getTags () {
       const tags = await postgres.query({
-        text: `SELECT * FROM tags`,
-      });
-      return tags.rows;
+        text: `SELECT * FROM tags`
+      })
+      return tags.rows
     },
     // NOW - PART 1
-    async getTagsForItem(id) {
+    async getTagsForItem (id) {
       const tagsQuery = {
         text: `SELECT * FROM tags LEFT JOIN items_tags ON tags.id = items_tags.tag_id WHERE item_id = $1`,
         values: [id]
-      };
+      }
 
-      const tags = await postgres.query(tagsQuery);
-      return tags.rows;
+      const tags = await postgres.query(tagsQuery)
+      return tags.rows
     },
     // NOW - PART 1
-    async saveNewItem({
-      title,
-      description,
-      ownerID,
-      borrowerID,
-      tagIDs,
-    }) {
+    async saveNewItem ({ title, description, ownerID, borrowerID, tagIDs }) {
       /**
        *  @TODO: Adding a New Item
        *
@@ -180,18 +174,16 @@ module.exports = postgres => {
           values: [title, description, ownerID, borrowerID]
         })
 
-        console.log(itemResult);
-        const item_id = itemResult.row[0].id        
-        const tagPromise = tagIDs.map(async (tag_id) => {
+        console.log(itemResult)
+        const item_id = itemResult.row[0].id
+        const tagPromise = tagIDs.map(async tag_id => {
           await client.query({
             text: `INSERT INTO items_tags (item_id, tag_id) VALUES ($1, $2)`,
             values: [item_id, tag_id]
           })
         })
 
-        await Promise.all(
-          tagPromise
-        )
+        await Promise.all(tagPromise)
 
         // Commit the entire transaction!
         await client.query('COMMIT')
@@ -202,11 +194,11 @@ module.exports = postgres => {
         // Something went wrong
         client.query('ROLLBACK', err => {
           if (err) {
-            throw err;
+            throw err
           }
           // release the client back to the pool
-        });
-        throw e;
+        })
+        throw e
       }
     }
   }

@@ -47,7 +47,7 @@ module.exports = ({ app, pgResource }) => {
          * Refactor this code and supply any additional information (values, methods, objects...etc)
          * you'll need to use in your resolving functions.
          */
-         pgResource,
+        pgResource,
       };
     },
     schema

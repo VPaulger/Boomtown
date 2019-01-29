@@ -1,4 +1,4 @@
-const { gql } = require('apollo-server-express');
+const { gql } = require('apollo-server-express')
 
 /**
  *  @TODO: Boomtown Schema
@@ -55,4 +55,4 @@ module.exports = gql`
   type Mutation {
     addItem(input: NewItemInput!): Item!
   }
-`;
+`

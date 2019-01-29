@@ -13,15 +13,15 @@
  *  The user resolver has been completed as an example of what you'll need to do.
  *  Finish of the rest of the resolvers when you're ready.
  */
-const { ApolloError } = require('apollo-server-express');
+const { ApolloError } = require('apollo-server-express')
 
 // @TODO: Uncomment these lines later when we add auth
 // const jwt = require("jsonwebtoken")
 // const authMutations = require("./auth")
 // -------------------------------
-const { UploadScalar, DateScalar } = require('../custom-types');
+const { UploadScalar, DateScalar } = require('../custom-types')
 
-module.exports = (app) => {
+module.exports = app => {
   return {
     // Upload: UploadScalar,
     // Date: DateScalar,
@@ -43,84 +43,84 @@ module.exports = (app) => {
          *  the token's stored user here. If there is no token, the user has signed out,
          *  in which case you'll return null
          */
-        return null;
+        return null
       },
       // NOW - PART 1
       async user(parent, { id }, { pgResource }, info) {
         try {
-          const user = await pgResource.getUserById(id);
-          return user;
+          const user = await pgResource.getUserById(id)
+          return user
         } catch (e) {
-          throw new ApolloError(e);
+          throw new ApolloError(e)
         }
       },
       // NOW - PART 1
-      async items(parent, { idToOmit }, { pgResource }, info)  {
+      async items(parent, { idToOmit }, { pgResource }, info) {
         try {
-          const items = await pgResource.getItems(idToOmit);
-          return items;
+          const items = await pgResource.getItems(idToOmit)
+          return items
         } catch (e) {
-          throw new ApolloError(e);
+          throw new ApolloError(e)
         }
       },
       // NOW - PART 1
-      async tags(parent, {} , { pgResource }, info) {
+      async tags(parent, { }, { pgResource }, info) {
         try {
-          const tags = await pgResource.getTags();
-          return tags;
+          const tags = await pgResource.getTags()
+          return tags
         } catch (e) {
-          throw new ApolloError(e);
+          throw new ApolloError(e)
         }
       }
     },
 
     User: {
       // NOW - PART 1
-      async items(parent, {}, { pgResource }, info) {
+      async items(parent, { }, { pgResource }, info) {
         try {
-          const items = await pgResource.getItems(parent.id);
-          return items;
+          const items = await pgResource.getItems(parent.id)
+          return items
         } catch (e) {
-          throw new ApolloError(e);
+          throw new ApolloError(e)
         }
       },
       // NOW - PART 1
-      async borrowed(parent, {}, { pgResource }, info) {
+      async borrowed(parent, { }, { pgResource }, info) {
         try {
-          const borrowed = await pgResource.getBorrowedItemsForUser(parent.id);
-          return borrowed;
+          const borrowed = await pgResource.getBorrowedItemsForUser(parent.id)
+          return borrowed
         } catch (e) {
-          throw new ApolloError(e);
+          throw new ApolloError(e)
         }
       }
     },
 
     Item: {
       // NOW - PART 1
-      async owner(parent, {}, { pgResource }, info) {
+      async owner(parent, { }, { pgResource }, info) {
         try {
-          const owner = await pgResource.getUserById(parent.ownerid);
-          return owner;
+          const owner = await pgResource.getUserById(parent.ownerid)
+          return owner
         } catch (e) {
-          throw new ApolloError(e);
+          throw new ApolloError(e)
         }
       },
       // NOW - PART 1
-      async tags(parent, {}, { pgResource }, info) {
+      async tags(parent, { }, { pgResource }, info) {
         try {
-          const tags = await pgResource.getTagsForItem(parent.id);
-          return tags;
+          const tags = await pgResource.getTagsForItem(parent.id)
+          return tags
         } catch (e) {
-          throw new ApolloError(e);
+          throw new ApolloError(e)
         }
       },
       // NOW - PART 1
-      async borrower(parent, {}, { pgResource }, info) {
+      async borrower(parent, { }, { pgResource }, info) {
         try {
-          const tags = await pgResource.getUserById(parent.borrowerid);
-          return tags;
+          const tags = await pgResource.getUserById(parent.borrowerid)
+          return tags
         } catch (e) {
-          throw new ApolloError(e);
+          throw new ApolloError(e)
         }
       }
     },
@@ -146,12 +146,12 @@ module.exports = (app) => {
 
         try {
           // const user = await jwt.decode(context.token, app.get('JWT_SECRET'));
-          const newItem = await context.pgResource.saveNewItem(args.input);
-          return newItem;
+          const newItem = await context.pgResource.saveNewItem(args.input)
+          return newItem
         } catch (e) {
-          throw new ApolloError(e);
+          throw new ApolloError(e)
         }
       }
     }
-  };
-};
+  }
+}
