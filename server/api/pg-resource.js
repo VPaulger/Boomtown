@@ -174,8 +174,9 @@ module.exports = postgres => {
           values: [title, description, ownerID, borrowerID]
         })
 
-        console.log(itemResult)
-        const item_id = itemResult.row[0].id
+        tagIDs = tagIDs ? tagIDs: []
+
+        const item_id = itemResult.rows[0].id
         const tagPromise = tagIDs.map(async tag_id => {
           await client.query({
             text: `INSERT INTO items_tags (item_id, tag_id) VALUES ($1, $2)`,
@@ -188,8 +189,8 @@ module.exports = postgres => {
         // Commit the entire transaction!
         await client.query('COMMIT')
 
-        return itemResult.row[0]
-        // return tagsResult.row[0]
+        return itemResult.rows[0]
+
       } catch (e) {
         // Something went wrong
         client.query('ROLLBACK', err => {
