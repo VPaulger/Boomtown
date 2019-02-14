@@ -20,38 +20,35 @@ function tagsQueryString (tags, itemid, result) {
 module.exports = postgres => {
   // FOR LATER - PART 2
   return {
-    async createUser ({ fullname, email, password }) {
+    async createUser ({ username, email, password, bio }) {
       const newUserInsert = {
-        text: '', // @TODO: Authentication - Server
-        values: [fullname, email, password]
+        text: `INSERT INTO users (username, email, password, bio) VALUES ($1, $2, $3, $4) RETURNING *`, // @TODO: Authentication - Server
+        values: [username, email, password, bio]
       }
       try {
         const user = await postgres.query(newUserInsert)
+        console.log('TESTasdfasdf', user.rows[0])
         return user.rows[0]
       } catch (e) {
         switch (true) {
-          case /users_fullname_key/.test(e.message):
+          case /users_username_key/.test(e.message):
             throw 'An account with this username already exists.'
           case /users_email_key/.test(e.message):
             throw 'An account with this email already exists.'
           default:
-            throw 'There was a problem creating your account.'
+            throw new Error(e)
         }
       }
     },
     // FOR LATER - PART 2
     async getUserAndPasswordForVerification (email) {
       const findUserQuery = {
-        text: '', // @TODO: Authentication - Server
+        text: `SELECT * FROM users WHERE email = $1`, // @TODO: Authentication - Server
         values: [email]
       }
-      try {
-        const user = await postgres.query(findUserQuery)
-        if (!user) throw 'User was not found.'
-        return user.rows[0]
-      } catch (e) {
-        throw 'User was not found.'
-      }
+      const user = await postgres.query(findUserQuery)
+      if (!user) throw 'User was not found.'
+      return user.rows[0]
     },
     // NOW - PART 1
     async getUserById (id) {
@@ -69,7 +66,7 @@ module.exports = postgres => {
        *  This will be the basic logic for this resource method:
        *  1) Query for the user using the given id. If no user is found throw an error.
        *  2) If there is an error with the query (500) throw an error.
-       *  3) If the user is found and there are no errors, return only the id, email, fullname, bio fields.
+       *  3) If the user is found and there are no errors, return only the id, email, username, bio fields.
        *     -- this is important, don't return the password!
        *
        *  You'll need to complete the query first before attempting this exercise.
@@ -139,7 +136,7 @@ module.exports = postgres => {
       return tags.rows
     },
     // NOW - PART 1
-    async saveNewItem ({ title, description, ownerID, borrowerID, tagIDs }) {
+    async saveNewItem ({ title, description, ownerid, borrowerid, tagIDs }) {
       /**
        *  @TODO: Adding a New Item
        *
@@ -170,8 +167,8 @@ module.exports = postgres => {
         await client.query('BEGIN')
 
         const itemResult = await client.query({
-          text: `INSERT INTO items (title, description, ownerID, borrowerID) VALUES ($1, $2, $3, $4) RETURNING *`,
-          values: [title, description, ownerID, borrowerID]
+          text: `INSERT INTO items (title, description, ownerid, borrowerid) VALUES ($1, $2, $3, $4) RETURNING *`,
+          values: [title, description, ownerid, borrowerid]
         })
 
         tagIDs = tagIDs ? tagIDs: []

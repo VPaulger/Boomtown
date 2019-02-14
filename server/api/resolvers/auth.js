@@ -1,6 +1,9 @@
 const { AuthenticationError } = require('apollo-server-express');
-const bcrypt = require('bcryptjs');
+const bcrypt = require('bcrypt');
+const saltRounds = 12;
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
+const Promise = require('bluebird');
 
 function setCookie({ tokenName, token, res }) {
   /**
@@ -19,12 +22,16 @@ function setCookie({ tokenName, token, res }) {
   // Refactor this method with the correct configuration values.
   res.cookie(tokenName, token, {
     // @TODO: Supply the correct configuration values for our cookie here
-  });
+    secure: process.env.NODE_ENV === 'production',
+    httpOnly: true, // prevents javacript from interacting with our cookie 
+    expires: new Date(Date.now() + 7200000),
+    // secure: true
+  }); 
   // -------------------------------
 }
 
-function generateToken(user, secret) {
-  const { id, email, fullname, bio } = user; // Omit the password from the token
+function generateToken(user, secret, csrfToken) {
+  const { id, email, username, bio } = user; // Omit the password from the token
   /**
    *  @TODO: Authentication - Server
    *
@@ -35,14 +42,23 @@ function generateToken(user, secret) {
    *  which can be decoded using the app secret to retrieve the stateless session.
    */
   // Refactor this return statement to return the cryptographic hash (the Token)
-  return '';
+
+  const payload = { 
+    userID : id,
+    csrfToken,
+    exp: Math.floor(Date.now() / 1000) + 2 * (60 * 60), 
+  }
+
+  // console.log(user)
+  // console.log(payload.csrfToken)
+  return jwt.sign(payload, secret);
   // -------------------------------
 }
 
 module.exports = (app) => {
   return {
     async signup(parent, args, context) {
-      try {
+      // try {
         /**
          * @TODO: Authentication - Server
          *
@@ -54,35 +70,45 @@ module.exports = (app) => {
          * and store that instead. The password can be decoded using the original password.
          */
         // @TODO: Use bcrypt to generate a cryptographic hash to conceal the user's password before storing it.
-        const hashedPassword = '';
+        const hashedPassword = await bcrypt.hash(args.input.password, saltRounds);
         // -------------------------------
+        // console.log(args.input)
 
         const user = await context.pgResource.createUser({
-          fullname: args.user.fullname,
-          email: args.user.email,
-          password: hashedPassword
+          username: args.input.username,
+          email: args.input.email,
+          password: hashedPassword,
+          bio: args.input.bio
         });
+
+        const csrfTokenBinary = await Promise.promisify(crypto.randomBytes)(32)
+        const csrfToken = Buffer.from(csrfTokenBinary, 'binary').toString('base64')
 
         setCookie({
           tokenName: app.get('JWT_COOKIE_NAME'),
-          token: generateToken(user, app.get('JWT_SECRET')),
+          token: generateToken(user, app.get('JWT_SECRET'), csrfToken),
           res: context.req.res
         });
 
         return {
-          id: user.id
-        };
-      } catch (e) {
-        throw new AuthenticationError(e);
-      }
+          user,
+          csrfToken
+        } 
+      // } catch (e) {
+      //   throw new AuthenticationError(e);
+      // }
     },
 
     async login(parent, args, context) {
-      try {
+      // try {
+
+        console.log(args.input.email)
         const user = await context.pgResource.getUserAndPasswordForVerification(
-          args.user.email
+          args.input.email,
         );
 
+        if (user == null) throw 'User was not found.';
+        
         /**
          *  @TODO: Authentication - Server
          *
@@ -90,27 +116,32 @@ module.exports = (app) => {
          *  they submitted from the login form to decrypt the 'hashed' version stored in out database.
          */
         // Use bcrypt to compare the provided password to 'hashed' password stored in your database.
-        const valid = false;
+        // const valid = false;
+        const valid = await bcrypt.compare(args.input.password, user.password);
         // -------------------------------
-        if (!valid || !user) throw 'User was not found.';
+        if (!valid) throw 'Incorrect email or password.';
+
+        const csrfTokenBinary = await Promise.promisify(crypto.randomBytes)(32)
+        const csrfToken = Buffer.from(csrfTokenBinary, 'binary').toString('base64')
 
         setCookie({
           tokenName: app.get('JWT_COOKIE_NAME'),
-          token: generateToken(user, app.get('JWT_SECRET')),
+          token: generateToken(user, app.get('JWT_SECRET'), csrfToken),
           res: context.req.res
         });
 
         return {
-          id: user.id
-        };
-      } catch (e) {
-        throw new AuthenticationError(e);
-      }
+          user,
+          csrfToken
+        } 
+      // } catch (e) {
+      //   throw new AuthenticationError(e);
+      // }
     },
 
-    logout(parent, args, context) {
-      context.req.res.clearCookie(app.get('JWT_COOKIE_NAME'));
-      return true;
-    }
+    // logout(parent, args, context) {
+    //   context.req.res.clearCookie(app.get('JWT_COOKIE_NAME'));
+    //   return true;
+    // }
   };
 };

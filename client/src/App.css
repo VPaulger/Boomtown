@@ -1,0 +1,117 @@
+#root {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  background-color: #f9a825;
+  display: flex;
+  align-items: center;
+}
+
+/* landing page */
+.landingPage {
+  padding: 160px;
+  display: flex;
+  /* align-items: center; */
+}
+
+.landingText {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  /* margin-top: -5px;  */
+}
+
+.landingText h1 {
+  margin-top: 0; 
+  color: white;
+  font-weight: 400;
+  font-size: 0.875rem;
+  font-weight: 500;
+  font-family: "Helvetica", sans-serif;
+  text-transform: uppercase;
+}
+
+.landingText h3 {
+  font-family: "Helvetica", sans-serif;
+  font-size: 7rem;
+  margin: 0;
+  line-height: 1.14286em;
+  letter-spacing: -.04em;
+  margin-left: -.04em;
+  margin-top: -5px; 
+  color: rgba(0, 0, 0, 0.87);
+}
+
+.landingForm {
+  width: 50%;
+  display: flex;
+  align-items: center;
+}
+
+.landingForm h1 {
+  margin-top: 0;
+  margin-bottom: 0.35em;
+  color: rgba(0, 0, 0, 0.87);
+  font-size: 1.5rem;
+  font-weight: 400;
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  line-height: 1.35417em;
+}
+
+/* .app form {
+  width: 400px;
+} */
+
+.landingLinks {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 16px;
+}
+
+.app button {
+  padding: 8px 24px;
+  min-width: 112px;
+  font-size: 0.9375rem;
+  margin-bottom: 16px;
+  min-height: 40px;
+}
+
+.landingLinks a{
+  padding: 1px 6px;
+  color: rgba(0, 0, 0, 0.87);
+  font-size: 0.845rem;
+  font-weight: 400;
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  line-height: 1.46429em;
+}
+
+.landingLinks a:visited {
+  color: rgba(0, 0, 0, 0.87);
+}
+
+.logout button {
+  background-color: #212121;
+  color: white;
+}
+
+.logout button:hover {
+  background-color: #000000;
+  color: white; 
+}
+
+/* textfield input */
+.MuiInputBase-root-36 {
+  width: 400px;
+  margin-top: 16px;
+  margin-bottom: 16px;
+}
+
+.MuiInput-underline-27:after {
+  border-bottom: 2px solid rgb(174, 117, 25) !important;
+}
+
+.input-feedback {
+  margin-top: -16px;
+  color: red;
+}

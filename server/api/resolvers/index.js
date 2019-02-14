@@ -16,10 +16,12 @@
 const { ApolloError } = require('apollo-server-express')
 
 // @TODO: Uncomment these lines later when we add auth
-// const jwt = require("jsonwebtoken")
-// const authMutations = require("./auth")
+const jwt = require("jsonwebtoken")
+const authMutations = require("./auth")
 // -------------------------------
 const { UploadScalar, DateScalar } = require('../custom-types')
+
+const authenticate = require('../authenticate')
 
 module.exports = app => {
   return {
@@ -28,7 +30,7 @@ module.exports = app => {
 
     Query: {
       // LATER - PART 2
-      viewer() {
+      async viewer(parent, args, { req, pgResource }) {
         /**
          * @TODO: Authentication - Server
          *
@@ -43,10 +45,16 @@ module.exports = app => {
          *  the token's stored user here. If there is no token, the user has signed out,
          *  in which case you'll return null
          */
-        return null
+
+        const userID = authenticate(app, req)
+
+        const user = await pgResource.getUserById(userID)
+
+        return user
       },
       // NOW - PART 1
-      async user(parent, { id }, { pgResource }, info) {
+      async user(parent, { id }, { pgResource, req }, info) {
+        authenticate(app, req)
         try {
           const user = await pgResource.getUserById(id)
           return user
@@ -55,7 +63,8 @@ module.exports = app => {
         }
       },
       // NOW - PART 1
-      async items(parent, { idToOmit }, { pgResource }, info) {
+      async items(parent, { idToOmit }, { pgResource, req }, info) {
+        authenticate(app, req)
         try {
           const items = await pgResource.getItems(idToOmit)
           return items
@@ -64,7 +73,8 @@ module.exports = app => {
         }
       },
       // NOW - PART 1
-      async tags(parent, { }, { pgResource }, info) {
+      async tags(parent, { }, { pgResource, req }, info) {
+        authenticate(app, req)
         try {
           const tags = await pgResource.getTags()
           return tags
@@ -127,10 +137,10 @@ module.exports = app => {
 
     Mutation: {
       // @TODO: Uncomment this later when we add auth
-      // ...authMutations(app),
+      ...authMutations(app),
       // -------------------------------
 
-      async addItem(parent, args, context, info) {
+      async addItem(parent, args, { pgResource, req }, info) {
         /**
          *  @TODO: Destructuring
          *
@@ -143,10 +153,13 @@ module.exports = app => {
          *  Again, you may look at the user resolver for an example of what
          *  destructuring should look like.
          */
-
+        // authenticate(app, req)
+        args.input.ownerid = authenticate(app, req)
+        console.log('WAT', args.input)
+        
         try {
           // const user = await jwt.decode(context.token, app.get('JWT_SECRET'));
-          const newItem = await context.pgResource.saveNewItem(args.input)
+          const newItem = await pgResource.saveNewItem(args.input)
           return newItem
         } catch (e) {
           throw new ApolloError(e)

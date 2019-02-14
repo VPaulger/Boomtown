@@ -27,7 +27,7 @@ module.exports = gql`
   type User {
     id: ID!
     username: String!
-    bio: String
+    bio: String 
     items: [Item]
     borrowed: [Item]
   }
@@ -37,12 +37,32 @@ module.exports = gql`
     title: String!
   }
 
+  type Viewer {
+    viewer: User
+  }
+
   input NewItemInput {
     title: String!
     description: String!
-    ownerID: ID!
     borrowerID: ID
-    tagIDs: [ID!]
+    tagIDs: [ID]
+  }
+
+  input NewUserInput {
+    username: String!
+    email: String!
+    password: String!
+    bio: String
+  }
+
+  input LoginInput {
+    email: String!
+    password: String!
+  }
+
+  type LoginResponse {
+    csrfToken: String!
+    user: User!
   }
 
   type Query {
@@ -54,5 +74,7 @@ module.exports = gql`
 
   type Mutation {
     addItem(input: NewItemInput!): Item!
+    signup(input: NewUserInput!): LoginResponse!
+    login(input: LoginInput!): LoginResponse!
   }
 `

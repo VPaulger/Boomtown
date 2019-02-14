@@ -48,6 +48,7 @@ module.exports = ({ app, pgResource }) => {
          * you'll need to use in your resolving functions.
          */
         pgResource,
+        req
       };
     },
     schema
@@ -57,7 +58,7 @@ module.exports = ({ app, pgResource }) => {
     app,
     uploads: true,
     // @TODO: Add the CORS_CONFIG from your application configuration
-    cors: undefined,
+    cors: app.get('CORS_CONFIG'),
     // -------------------------------
     uploads: apolloUploadExpress({
       maxFileSize: 10000000 // 10mb
