@@ -88,7 +88,7 @@ module.exports = app => {
       // NOW - PART 1
       async items(parent, { }, { pgResource }, info) {
         try {
-          const items = await pgResource.getItems(parent.id)
+          const items = await pgResource.getItemsForUser(parent.id)
           return items
         } catch (e) {
           throw new ApolloError(e)
@@ -153,9 +153,7 @@ module.exports = app => {
          *  Again, you may look at the user resolver for an example of what
          *  destructuring should look like.
          */
-        // authenticate(app, req)
         args.input.ownerid = authenticate(app, req)
-        console.log('WAT', args.input)
         
         try {
           // const user = await jwt.decode(context.token, app.get('JWT_SECRET'));
@@ -164,7 +162,19 @@ module.exports = app => {
         } catch (e) {
           throw new ApolloError(e)
         }
-      }
+      },
+
+      async addBorrower(parent, args, { pgResource, req }, info) {
+
+        args.input.borrowerid = authenticate(app, req)
+        
+        try {
+          const newBorrower = await pgResource.borrowItem(args.input)
+          return newBorrower
+        } catch (e) {
+          throw new ApolloError(e)
+        }
+      },
     }
   }
 }

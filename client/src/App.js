@@ -29,14 +29,14 @@ const theme = createMuiTheme({
     },
     secondary: {
       light: '#ff7961',
-      main: '#f44336',
-      dark: '#ba000d',
+      main: '#FFFFFF',
+      dark: '#DBDBDB',
       contrastText: '#000',
     },
   },
 });
 
-const App = (props) => {
+const App = () => {
 
   const [csrfToken, setCSRFToken] = useState(initialCSRFToken)
 

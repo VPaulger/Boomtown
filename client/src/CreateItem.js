@@ -1,8 +1,12 @@
 import React from 'react';
+import Select from "react-select";
 
 //formik & yup
 import { Formik } from 'formik';
 import * as Yup from 'yup';
+
+//components
+import SelectTags from "./SelectTags"
 
 //apollo
 import { Mutation } from "react-apollo";
@@ -10,7 +14,7 @@ import gql from "graphql-tag";
 
 //material ui
 import { Button, TextField } from '@material-ui/core'
-import { createMuiTheme } from '@material-ui/core'
+// import { createMuiTheme } from '@material-ui/core'
 
 
 import { makeStyles } from '@material-ui/styles';
@@ -44,63 +48,71 @@ const CreateItem = () => {
       <div className={classes.createItemContainer}>
         <h1>Create Items Page</h1>
         <Mutation
-          // update={(cache, { data: { addTodo } }) => {
-          //   const { todos } = cache.readQuery({ query: GET_TODOS });
-          //   cache.writeQuery({
-          //     query: GET_TODOS,
-          //     data: { todos: todos.concat([addTodo]) },
-          //   });
-          // }}
           onError={(error) => {
             alert(error)
           }}
           mutation={gql`
-            mutation($title: String!, $description: String!) {
+            mutation($item: NewItemInput!) {
               addItem (
-                input: {
-                  title: $title,
-                  description: $description,
-                } 	
+                input: $item	
               ) {
+                  id
                   title
                   description
                 }
             }  
           `}
         >
-          {(signUpUser, { loading, error, data }) => {
+          {(addItem, { loading, error, data }) => {
             if (loading) return <p>Loading...</p>;
             if (error) return <p>Error :(</p>;
-            console.log('adding item', data)
+
             return (
             <div className="app">
               <Formik
                 initialValues={{
                   title: '',
                   description: '',
+                  tags: [],
                 }}
                 onSubmit={(values, { setSubmitting }) => {
-                  signUpUser({ variables: values })
+                  values = {
+                    ...values,
+                    tags: values.tags.map(t => t.value),
+                  };
+                  addItem({ variables: {
+                    item: values
+                  } })
                   // console.log(values);
                   // console.log(data)
-                  setSubmitting(false);
+                  setSubmitting(false)
+                  
                 }}
                 validationSchema={Yup.object().shape({
                   title: Yup.string()
                     .required('required'),
                   description: Yup.string()
                     .required('required'),
+                  tags: Yup.array()
+                    .of(
+                      Yup.object().shape({
+                        label: Yup.string().required(),
+                        value: Yup.string().required(),
+                      })
+                  ),
                 })}
               >
                 {props => {
                   const {
-                    errors,
+                    errors, 
                     handleChange,
                     handleBlur,
                     handleSubmit,
                     isSubmitting,
+                    setFieldValue,
+                    setFieldTouched,
                     touched,
-                    values
+                    values,                    
                   } = props;
                   return (
                     <form
@@ -144,6 +156,16 @@ const CreateItem = () => {
                         {errors.description && touched.description && (
                           <div className="input-feedback">{errors.description}</div>
                         )}
+
+                        <SelectTags
+                          value={values.tags}
+                          onChange={setFieldValue}
+                          // options={options}
+                          onBlur={setFieldTouched}
+                          error={errors.topics}
+                          touched={touched.topics}
+                        />
+
                       </div>
 
                       <br />

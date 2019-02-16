@@ -1,7 +1,7 @@
 import React from 'react';
 
 //apollo
-import { Query, Mutation } from "react-apollo";
+import { Query } from "react-apollo";
 import gql from "graphql-tag";
 
 //material-ui
@@ -13,6 +13,9 @@ import Grid from '@material-ui/core/Grid';
 import CardActions from '@material-ui/core/CardActions';
 import Button from '@material-ui/core/Button';
 
+//components
+import BorrowItemButton from './BorrowItemButton'
+
 
 const useStyles = makeStyles({
   title: {
@@ -21,31 +24,31 @@ const useStyles = makeStyles({
     textAlign: 'center',
   },
   itemContainer: {
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    height: '500px',
+    // display: 'flex',
+    // flexDirection: 'column',
+    // justifyContent: 'center',
+    height: '100vh',
+    marginTop: 65,
+    // position: 'relative',
   },
   grid: {
-    width: '100%',
     display: 'flex',
     justifyContent: 'center',
     margin: 0,
   },
   card: {
     width: '250px !important',
-    height: '225px',
-  },
-  bullet: {
-    display: 'inline-block',
-    margin: '0 2px',
-    transform: 'scale(0.8)',
+    height: '250px',
   },
   itemName: {
     fontSize: 14,
   },
   pos: {
     marginBottom: 12,
+  },
+  borrowButton: {
+    background: '#000000',
+    color: '#FFFFFF',
   },
 });
 
@@ -59,6 +62,7 @@ const Library = () => {
         <h1>Library</h1>
       </div>
       <Grid container spacing={16} className={classes.grid}>
+        
         <Query
             query={gql`
             {
@@ -81,9 +85,9 @@ const Library = () => {
           if (loading) return <p>Loading...</p>;
           if (error) return <p>Error :(</p>;
 
-          const items = data.items.map(({ title, description }) => (
+          const items = data.items.map(({ id, title, description, borrower }) => (
             <Grid item>
-              <Card className={classes.card}>
+              <Card className={classes.card} style={{background: borrower ? '#D62426' : '#FFFFFF'}}>
                 <CardContent >
                   <Typography className={classes.itemName} color="textSecondary" gutterBottom>
                     Name
@@ -99,13 +103,12 @@ const Library = () => {
                   </Typography>
                 </CardContent>
                 <CardActions>
-                  <Button size="small">Learn More</Button>
+                  <BorrowItemButton id={id} />
                 </CardActions>
               </Card>
             </Grid>
           ));
 
-          console.log(data);
           return items;
 
           }}
@@ -116,26 +119,3 @@ const Library = () => {
 }
 
 export default Library;
-
-{/* <Mutation
-      mutation={gql`
-        mutation($title: String!, $description: String!) {
-          addItem (
-            input: {
-              title: $title,
-              description: $description,
-            } 	
-          ) {
-              title
-              description
-            }
-        }  
-      `}
-    >
-      {(borrowItem, { loading, error, data }) => {
-        if (loading) return <p>Loading...</p>;
-        if (error) return <p>Error :(</p>;
-    
-        <Button type="primary" onClick={borrowItem}>Borrow Item</Button>
-      }}
-    </Mutation> */}

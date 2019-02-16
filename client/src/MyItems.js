@@ -15,6 +15,7 @@ import Grid from '@material-ui/core/Grid';
 
 const useStyles = makeStyles({
   title: {
+    marginTop: 50,
     width: '100%',
     height: 100,
     textAlign: 'center',
@@ -23,7 +24,7 @@ const useStyles = makeStyles({
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
-    height: '500px',
+    height: 'auto',
   },
   grid: {
     width: '100%',
@@ -33,7 +34,7 @@ const useStyles = makeStyles({
   },
   card: {
     width: '250px !important',
-    // height: 55,
+    height: 225,
   },
   bullet: {
     display: 'inline-block',
@@ -71,6 +72,7 @@ const MyItems = () => {
                     id
                     title
                   }
+                description
                 }
                 borrowed {
                   title
@@ -104,7 +106,6 @@ const MyItems = () => {
                 </Grid>
               ));
 
-              console.log(data);
               return items;
 
             }}

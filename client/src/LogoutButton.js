@@ -3,8 +3,6 @@ import React from 'react';
 //material ui
 import { Button } from '@material-ui/core'
 
-import { createMuiTheme } from '@material-ui/core'
-
 import { Link } from 'react-router-dom'
 
 const styles = theme => ({
@@ -17,31 +15,14 @@ const styles = theme => ({
   },
 });
 
-const theme = createMuiTheme({
-  palette: {
-    primary: {
-      light: '#757ce8',
-      main: '#3f50b5',
-      dark: '#002884',
-      contrastText: '#fff',
-    },
-    secondary: {
-      light: '#ff7961',
-      main: '#f44336',
-      dark: '#ba000d',
-      contrastText: '#000',
-    },
-  },
-});
-
 const LogoutButton = ({
   setCSRFToken,
 }) => (
     <div className = "logout">
     <Link to="/" style={{ textDecoration: 'none' }}>
       <Button 
-        // variant="contained" 
-        color="primary"
+        variant="contained" 
+        color="secondary"
         className={styles.button}
         onClick={() => {
           localStorage.removeItem('token')

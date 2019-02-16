@@ -26,7 +26,7 @@ const useStyles = makeStyles({
   },
   inputFeedback: {
     marginTop: -16,
-    fontSize: '4px !important',
+    fontSize: 14,
   },
   landingLinks: {
     display: 'flex',
@@ -138,7 +138,7 @@ const SignUpForm = ({
                     `}
                   />
                   {errors.username && touched.username && (
-                    <div className="inputFeedback">{errors.username}</div>
+                    <div className={classes.inputFeedback}>{errors.username}</div>
                   )}
 
                   <TextField
@@ -158,7 +158,7 @@ const SignUpForm = ({
                     `}
                   />
                   {errors.email && touched.email && (
-                    <div className="inputFeedback">{errors.email}</div>
+                    <div className={classes.inputFeedback}>{errors.email}</div>
                   )}
 
                   <TextField
@@ -179,7 +179,7 @@ const SignUpForm = ({
                     `}
                   />
                   {errors.password && touched.password && (
-                    <div className="inputFeedback">{errors.password}</div>
+                    <div className={classes.inputFeedback}>{errors.password}</div>
                   )}
 
 

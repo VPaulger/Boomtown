@@ -198,6 +198,20 @@ module.exports = postgres => {
         })
         throw e
       }
-    }
+    },
+
+    async borrowItem ({ itemID, borrowerid }) {
+      console.log({ itemID, borrowerid })
+      const items = await postgres.query({
+        text: `UPDATE items SET borrowerid = $2 WHERE id = $1 AND borrowerid IS NULL RETURNING *`,
+        values: [itemID, borrowerid]
+      })
+
+      if (items.rows.length === 0) {
+        throw new Error('Item already borrowed')
+      }
+
+      return items.rows[0]
+    },
   }
 }

@@ -5,6 +5,7 @@
   background-color: #f9a825;
   display: flex;
   align-items: center;
+  overflow-y: scroll;
 }
 
 /* landing page */
@@ -90,7 +91,7 @@
   color: rgba(0, 0, 0, 0.87);
 }
 
-.logout button {
+/* .logout button {
   background-color: #212121;
   color: white;
 }
@@ -98,7 +99,7 @@
 .logout button:hover {
   background-color: #000000;
   color: white; 
-}
+} */
 
 /* textfield input */
 .MuiInputBase-root-36 {

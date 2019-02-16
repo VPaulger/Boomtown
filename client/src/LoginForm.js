@@ -27,7 +27,7 @@ const useStyles = makeStyles({
   },
   inputFeedback: {
     marginTop: -16,
-    fontSize: '4px !important',
+    fontSize: 14,
   },
   landingLinks: {
     display: 'flex',
@@ -47,6 +47,7 @@ const useStyles = makeStyles({
 const LoginForm = ({
   setCSRFToken,
 }) => {
+ 
   const classes = useStyles();
 
   return (
@@ -98,7 +99,6 @@ const LoginForm = ({
             })}
           >
             {props => {
-              const { classes } = props;
               const {
                 errors,
                 handleChange,
@@ -110,7 +110,7 @@ const LoginForm = ({
               } = props;
               return (
                 <form
-                  // className={classes.form}
+                  className={classes.form}
                   onSubmit={handleSubmit}
                 >
       
@@ -124,13 +124,14 @@ const LoginForm = ({
                     // style={{ width: '100%', marginBottom: 16 }}
                     className={`
                       ${classes.textField}
-                      errors.email && touched.email
+                      ${errors.email && touched.email
                         ? 'text-input error'
                         : 'text-input'
+                      }
                     `}
                   />
                   {errors.email && touched.email && (
-                    <div className="input-feedback">{errors.email}</div>
+                    <div className={classes.inputFeedback}>{errors.email}</div>
                   )}
 
                   <TextField
@@ -140,15 +141,17 @@ const LoginForm = ({
                     value={values.password}
                     onChange={handleChange}
                     onBlur={handleBlur}
-                    style={{ width: '100%', marginBottom: 16 }}
-                    className={
-                      errors.password && touched.password
-                        ? 'text-input error'
-                        : 'text-input'
+                    // style={{ width: '100%', marginBottom: 16 }}
+                    className={`
+                    ${classes.textField}
+                    ${errors.email && touched.email
+                      ? 'text-input error'
+                      : 'text-input'
                     }
+                  `}
                   />
                   {errors.password && touched.password && (
-                    <div className="input-feedback">{errors.password}</div>
+                    <div className={classes.inputFeedback}>{errors.password}</div>
                   )}
 
                   <br />
