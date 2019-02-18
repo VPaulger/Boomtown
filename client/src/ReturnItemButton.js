@@ -7,38 +7,40 @@ import { Button } from '@material-ui/core'
 import { Mutation } from "react-apollo";
 import gql from "graphql-tag";
 
-const BorrowItemButton = ({id}) => (
+
+const ReturnItemButton = (props) => (
     <div>
+      {console.log('this is the id', props.itemID)}
+
       <Mutation
           onError={(error) => {
             alert(error)
           }}
           mutation={gql`
-            mutation($borrower: NewBorrowerInput!) {
-              addBorrower (
-                input: $borrower
+            mutation($itemID: NewReturnInput!) {
+              returnItem (
+                input: $itemID
               ) {
                 id
-                borrower {
-                  username
-                }
+                title
               }
             }  
           `}
         >
-          {(borrowItem, { loading, error, data }) => {
+          {(returnItem, { loading, error, data }) => {
           if (loading) return <p>Loading...</p>;
           if (error) return <p>Error :(</p>;
-            console.log(data)
+            console.log("id:", props.itemID)
             return (
               <Button 
                 variant="contained" 
                 color="primary"
                 onClick={() => {
-                  borrowItem({ variables: { borrower: { itemID: id }} })
+                  returnItem({ variables: { itemID: props.itemID }})
+                  window.location = '/borrowing'
                 }}
               >
-                Borrow
+                Return
               </Button>
             )
           }}
@@ -46,4 +48,4 @@ const BorrowItemButton = ({id}) => (
     </div>
 );
 
-export default BorrowItemButton;
+export default ReturnItemButton;

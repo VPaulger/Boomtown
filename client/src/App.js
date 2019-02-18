@@ -54,7 +54,7 @@ const App = () => {
                 <Dashboard setCSRFToken={setCSRFToken} history={history}/>
               )} /> 
             )}
-
+  
           </div>
         </ThemeProvider>
       </ApolloProvider>

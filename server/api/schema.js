@@ -59,6 +59,10 @@ module.exports = gql`
     itemID: ID!
   }
 
+  input NewReturnInput {
+    itemID: ID!
+  }
+
   input LoginInput {
     email: String!
     password: String!
@@ -81,5 +85,6 @@ module.exports = gql`
     signup(input: NewUserInput!): LoginResponse!
     login(input: LoginInput!): LoginResponse!
     addBorrower(input: NewBorrowerInput!): Item!
+    returnItem(input: NewReturnInput!): Item!
   }
 `

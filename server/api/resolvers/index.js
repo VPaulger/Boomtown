@@ -175,6 +175,21 @@ module.exports = app => {
           throw new ApolloError(e)
         }
       },
+
+      async returnItem(parent, args, { pgResource, req }, info) {
+        
+        authenticate(app, req)
+        // args.input.borrowerid = authenticate(app, req)
+
+        console.log(args.input)
+
+        try {
+          const newReturn = await pgResource.returnItem(args.input)
+          return newReturn
+        } catch (e) {
+          throw new ApolloError(e)
+        }
+      },
     }
   }
 }

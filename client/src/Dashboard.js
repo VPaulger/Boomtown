@@ -16,6 +16,7 @@
 // import Library from './Library'
 // import LogoutButton from './LogoutButton'
 // import CreateItem from './CreateItem';
+// import UserGreeting from './UserGreeting';
 
 // const useStyles = makeStyles({
 //   dashboard: {
@@ -70,6 +71,7 @@
 //           <ListItemText primary="Boomtown" />
 //         </ListItem>
 //         <Divider />
+//         {/* <ListItem button component={Link} to="/" selected={window.location.pathname === '/'} className={classes.listItem}> */}
 //         <ListItem button component={Link} to="/" selected={history.location.pathname === '/'} className={classes.listItem}>
 //           <ListItemText primary="My Items" />
 //         </ListItem>
@@ -87,6 +89,7 @@
 //             <Typography variant="h6" color="inherit">
 //               Share. Borrow. Prosper.
 //             </Typography>
+//             <UserGreeting />
 //             <Route path="/" render={() => (
 //               <LogoutButton setCSRFToken={setCSRFToken} />
 //             )} />
@@ -149,6 +152,8 @@ import Borrowing from './Borrowing'
 import Library from './Library'
 import LogoutButton from './LogoutButton'
 import CreateItem from './CreateItem';
+import UserGreeting from './UserGreeting';
+
 
 
 const drawerWidth = 240;
@@ -156,6 +161,7 @@ const drawerWidth = 240;
 const useStyles = makeStyles(theme => ({
   root: {
     display: 'flex',
+    width: '100vw',
   },
   drawer: {
     [theme.breakpoints.up('sm')]: {
@@ -175,7 +181,6 @@ const useStyles = makeStyles(theme => ({
       display: 'none',
     },
   },
-  // toolbar: theme.mixins.toolbar,
   drawerPaper: {
     width: drawerWidth,
   },
@@ -183,6 +188,10 @@ const useStyles = makeStyles(theme => ({
     flexGrow: 1,
     padding: theme.spacing.unit * 3,
     marginTop: 65,
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'center',
+    // flexDirection: 'column',
   },
   toolBar: {
     width: '100%',
@@ -194,6 +203,16 @@ const useStyles = makeStyles(theme => ({
     height: 65,
     paddingTop: 0,
   },
+  createItem: {
+    paddingTop: 20,
+  },
+  siteName: {
+    // textAlign: 'center', 
+    color: '#f9a825',
+    // display: 'flex',
+    // justifyContent: 'center',
+    // alignItems: 'center',
+  }
 }));
 
 function ResponsiveDrawer({
@@ -220,8 +239,8 @@ function ResponsiveDrawer({
               </ListItem>
             ))} */}
             <Toolbar button component={Link} to="/" >
-              <Typography color="inherit" >
-                Boomtown
+              <Typography color="inherit" className={classes.siteName} >
+                BOOMTOWN
               </Typography>
             </Toolbar>
             <Divider />
@@ -309,9 +328,10 @@ function ResponsiveDrawer({
       
       <div className={classes.content}>
         <Route path="/" exact render={() => (
-          <div>
+          <div >
+            <UserGreeting />
             <MyItems setCSRFToken={setCSRFToken} />
-            <CreateItem />
+            <CreateItem className={classes.createItem}/>
           </div>
         )} />
         <Route path="/borrowing" exact render={() => (

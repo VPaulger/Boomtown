@@ -213,5 +213,19 @@ module.exports = postgres => {
 
       return items.rows[0]
     },
+
+    async returnItem ({ itemID }) {
+      console.log({ itemID })
+      const items = await postgres.query({
+        text: `UPDATE items SET borrowerid = NULL WHERE id = $1 RETURNING *`,
+        values: [itemID]
+      })
+
+      if (items.rows.length === 0) {
+        throw new Error('Sorry something went wrong...')
+      }
+
+      return items.rows[0]
+    },
   }
 }

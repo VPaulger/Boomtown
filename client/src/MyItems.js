@@ -15,22 +15,22 @@ import Grid from '@material-ui/core/Grid';
 
 const useStyles = makeStyles({
   title: {
-    marginTop: 50,
+    // marginTop: 50,
     width: '100%',
     height: 100,
-    textAlign: 'center',
   },
   itemContainer: {
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
     height: 'auto',
+    paddingTop: 20,
   },
   grid: {
     width: '100%',
     display: 'flex',
-    justifyContent: 'center',
-    margin: 0,
+    // justifyContent: 'center',
+    // margin: 0,
   },
   card: {
     width: '250px !important',
@@ -56,7 +56,7 @@ const MyItems = () => {
   return(
     <div className={classes.itemContainer}>
       <div className={classes.title}>
-        <h1>My Items Page</h1>
+        <h2>My Items:</h2>
       </div>
     
       <Grid container spacing={16} className={classes.grid}>
@@ -82,12 +82,13 @@ const MyItems = () => {
           `}
         >
             {({ loading, error, data }) => {
-            if (loading) return <p>Loading...</p>;
-            if (error) return <p>Error :(</p>;
+              if (loading) return <p>Loading...</p>;
+              if (error) return <p>Error :(</p>;
 
-              const items = data.viewer.items.map(({ title, description }) => (
+              const items = data.viewer.items.map(({ title, description, borrowed }) => (
                 <Grid item>
-                  <Card className={classes.card}>
+                  {console.log(borrowed)}
+                  <Card className={classes.card} style={{background: borrowed ? '#D62426' : '#FFFFFF'}}>  
                     <CardContent >
                       <Typography className={classes.itemName} color="textSecondary" gutterBottom>
                         Name

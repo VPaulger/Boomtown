@@ -21,7 +21,8 @@ import { makeStyles } from '@material-ui/styles';
 
 const useStyles = makeStyles({
   createItemContainer: {
-    width: 800,
+    paddingTop: 50,
+    width: '100%',
   },
   form: {
     display: 'flex',
@@ -38,6 +39,16 @@ const useStyles = makeStyles({
     // margin: 10,
     alignSelf: 'flex-end',
   },
+  createItem: {
+    paddingTop: 20,
+  },
+  TextField: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  inputFeedback: {
+    marginTop: 10,
+  }
 });
 
 
@@ -46,7 +57,7 @@ const CreateItem = () => {
         
     return(
       <div className={classes.createItemContainer}>
-        <h1>Create Items Page</h1>
+        <h2>Create Item:</h2>
         <Mutation
           onError={(error) => {
             alert(error)
@@ -120,42 +131,47 @@ const CreateItem = () => {
                       onSubmit={handleSubmit}
                     >
                       <div className={classes.textContainer}>
-                        <TextField
-                          label="title"
-                          id="title"
-                          placeholder="Enter your title"
-                          type="text"
-                          value={values.title}
-                          onChange={handleChange}
-                          onBlur={handleBlur}
-                          style={{ width: '390px' }}
-                          className={
-                            errors.title && touched.title
-                              ? 'text-input error'
-                              : 'text-input'
-                          }
-                        />
-                        {errors.title && touched.title && (
-                          <div className="input-feedback">{errors.title}</div>
-                        )}
+                        <div className={classes.TextField}>
+                          <TextField
+                            label="title"
+                            id="title"
+                            placeholder="Enter your title"
+                            type="text"
+                            value={values.title}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            style={{ width: '350px', paddingRight: '20px' }}
+                            className={
+                              errors.title && touched.title
+                                ? 'text-input error'
+                                : 'text-input'
+                            }
+                          />
+                          {errors.title && touched.title && (
+                            <div className={classes.inputFeedback}>{errors.title}</div>
+                          )}
+                        </div>
 
-                        <TextField
-                          label="description"
-                          id="description"
-                          type="text"
-                          value={values.description}
-                          onChange={handleChange}
-                          onBlur={handleBlur}
-                          style={{ width: '390px' }}
-                          className={
-                            errors.description && touched.description
-                              ? 'text-input error'
-                              : 'text-input'
-                          }
-                        />
-                        {errors.description && touched.description && (
-                          <div className="input-feedback">{errors.description}</div>
-                        )}
+                        <div className={classes.TextField}>
+                          <TextField
+                            label="description"
+                            id="description"
+                            type="text"
+                            value={values.description}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            style={{ width: '350px', paddingRight: '20px' }}
+                            className={
+                              errors.description && touched.description
+                                ? 'text-input error'
+                                : 'text-input'
+                            }
+                          />
+                          {errors.description && touched.description && (
+                            <div className={classes.inputFeedback}>{errors.description}</div>
+                          )}
+                        </div>
+
 
                         <SelectTags
                           value={values.tags}
