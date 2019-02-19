@@ -137,7 +137,7 @@ const LoginForm = ({
                   <TextField
                     label="Password"
                     id="password"
-                    type="text"
+                    type="password"
                     value={values.password}
                     onChange={handleChange}
                     onBlur={handleBlur}
