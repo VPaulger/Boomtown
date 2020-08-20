@@ -12,7 +12,7 @@
     "apollo-client": "^2.4.12",
     "apollo-link-context": "^1.0.14",
     "apollo-link-http": "^1.5.11",
-    "bcrypt": "^3.0.4",
+    "bcrypt": "^5.0.0",
     "bootstrap": "4.3.1",
     "classnames": "^2.2.6",
     "formik": "^1.4.3",
